@@ -9,25 +9,41 @@ ChessJudge::ChessJudge(IChessboard *chess_board):
 
 GameResult ChessJudge::DoJudge(int last_x, int last_y)
 {
-    GameResult result = VerticalJudge(last_x, last_y);
-    if(result != GameResult::NoResult){
-        return result;
-    }
-
-    result = HorizontalJudge(last_x, last_y);
-    if(result != GameResult::NoResult){
-        return result;
-    }
-
-    result = SlashJudge(last_x, last_y);
-    if(result != GameResult::NoResult){
-        return result;
-    }
-
-    return BlashSlashJudge(last_x, last_y);
+    QVector<QPoint> cojoint_points;
+    return DoJudge(last_x, last_y, cojoint_points);
 }
 
-GameResult ChessJudge::VerticalJudge(int last_x, int last_y)
+GameResult ChessJudge::DoJudge(int last_x, int last_y, QVector<QPoint> &cojoint_points)
+{
+    cojoint_points.clear();
+    GameResult result = VerticalJudge(last_x, last_y, cojoint_points);
+    if(result != GameResult::NoResult){
+        return result;
+    }
+
+    cojoint_points.clear();
+    result = HorizontalJudge(last_x, last_y, cojoint_points);
+    if(result != GameResult::NoResult){
+        return result;
+    }
+
+    cojoint_points.clear();
+    result = SlashJudge(last_x, last_y, cojoint_points);
+    if(result != GameResult::NoResult){
+        return result;
+    }
+
+    cojoint_points.clear();
+    result = BlashSlashJudge(last_x, last_y, cojoint_points);
+    if(result != GameResult::NoResult){
+        return result;
+    }
+
+    cojoint_points.clear();
+    return GameResult::NoResult;
+}
+
+GameResult ChessJudge::VerticalJudge(int last_x, int last_y, QVector<QPoint> &cojoint_points)
 {
     Chess chess = chess_board_->GetChess(last_x, last_y);
     assert(chess != Chess::Empty);
@@ -35,11 +51,13 @@ GameResult ChessJudge::VerticalJudge(int last_x, int last_y)
     int cojoint_count = 1;
     for(int i = last_y - 1; i >= 0; i--){
         if(chess_board_->GetChess(last_x, i) == chess){
+            cojoint_points.append(QPoint(last_x, i));
             cojoint_count++;
         }
     }
     for(int i = last_y + 1; i < chess_board_->GetHeight(); i++){
         if(chess_board_->GetChess(last_x, i) == chess){
+            cojoint_points.append(QPoint(last_x, i));
             cojoint_count++;
         }
     }
@@ -52,7 +70,7 @@ GameResult ChessJudge::VerticalJudge(int last_x, int last_y)
     return result;
 }
 
-GameResult ChessJudge::HorizontalJudge(int last_x, int last_y)
+GameResult ChessJudge::HorizontalJudge(int last_x, int last_y, QVector<QPoint> &cojoint_points)
 {
     Chess chess = chess_board_->GetChess(last_x, last_y);
     assert(chess != Chess::Empty);
@@ -60,11 +78,13 @@ GameResult ChessJudge::HorizontalJudge(int last_x, int last_y)
     int cojoint_count = 1;
     for(int i = last_x - 1; i >= 0; i--){
         if(chess_board_->GetChess(i, last_y) == chess){
+            cojoint_points.append(QPoint(i, last_y));
             cojoint_count++;
         }
     }
     for(int i = last_x + 1; i < chess_board_->GetWidth(); ++i){
         if(chess_board_->GetChess(i, last_y) == chess){
+            cojoint_points.append(QPoint(i, last_y));
             cojoint_count++;
         }
     }
@@ -77,7 +97,7 @@ GameResult ChessJudge::HorizontalJudge(int last_x, int last_y)
     return result;
 }
 
-GameResult ChessJudge::SlashJudge(int last_x, int last_y)
+GameResult ChessJudge::SlashJudge(int last_x, int last_y, QVector<QPoint> &cojoint_points)
 {
     Chess chess = chess_board_->GetChess(last_x, last_y);
     assert(chess != Chess::Empty);
@@ -88,6 +108,7 @@ GameResult ChessJudge::SlashJudge(int last_x, int last_y)
         i++, j--)
     {
         if(chess_board_->GetChess(i, j) == chess){
+            cojoint_points.append(QPoint(i, j));
             cojoint_count++;
         }
     }
@@ -97,6 +118,7 @@ GameResult ChessJudge::SlashJudge(int last_x, int last_y)
         --i, ++j)
     {
         if(chess_board_->GetChess(i, j) == chess){
+            cojoint_points.append(QPoint(i, j));
             cojoint_count++;
         }
     }
@@ -109,7 +131,7 @@ GameResult ChessJudge::SlashJudge(int last_x, int last_y)
     return result;
 }
 
-GameResult ChessJudge::BlashSlashJudge(int last_x, int last_y)
+GameResult ChessJudge::BlashSlashJudge(int last_x, int last_y, QVector<QPoint> &cojoint_points)
 {
     Chess chess = chess_board_->GetChess(last_x, last_y);
     assert(chess != Chess::Empty);
@@ -120,6 +142,7 @@ GameResult ChessJudge::BlashSlashJudge(int last_x, int last_y)
         ++i, ++j)
     {
         if(chess_board_->GetChess(i, j) == chess){
+            cojoint_points.append(QPoint(i, j));
             cojoint_count++;
         }
     }
@@ -129,6 +152,7 @@ GameResult ChessJudge::BlashSlashJudge(int last_x, int last_y)
         --i, --j)
     {
         if(chess_board_->GetChess(i, j) == chess){
+            cojoint_points.append(QPoint(i, j));
             cojoint_count++;
         }
     }

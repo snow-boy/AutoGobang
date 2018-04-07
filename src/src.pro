@@ -6,13 +6,23 @@ SOURCES += \
     main.cpp \
     chessboard.cpp \
     chessboardwidget.cpp \
-    chessjudge.cpp
+    chessjudge.cpp \
+    mainwindow.cpp \
+    chessarena.cpp \
+    playermanager.cpp
 
 HEADERS += \
     ichessboard.h \
     chessboard.h \
     chessboardwidget.h \
     chessjudge.h \
-    ichessplayer.h
+    ichessplayer.h \
+    mainwindow.h \
+    chessarena.h \
+    playermanager.h
 
-FORMS +=
+FORMS += \
+    mainwindow.ui
+
+RESOURCES += \
+    resources.qrc

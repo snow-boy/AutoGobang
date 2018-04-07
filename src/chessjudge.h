@@ -1,6 +1,7 @@
 #ifndef CHESSJUDGE_H
 #define CHESSJUDGE_H
 
+#include <QVector>
 #include "ichessboard.h"
 
 enum class GameResult
@@ -17,11 +18,21 @@ public:
 
     GameResult DoJudge(int last_x, int last_y);
 
+    GameResult DoJudge(int last_x, int last_y,
+                       QVector<QPoint> &cojoint_points);
+
 private:
-    GameResult VerticalJudge(int last_x, int last_y);
-    GameResult HorizontalJudge(int last_x, int last_y);
-    GameResult SlashJudge(int last_x, int last_y);
-    GameResult BlashSlashJudge(int last_x, int last_y);
+    GameResult VerticalJudge(int last_x, int last_y,
+                             QVector<QPoint> &cojoint_points);
+
+    GameResult HorizontalJudge(int last_x, int last_y,
+                               QVector<QPoint> &cojoint_points);
+
+    GameResult SlashJudge(int last_x, int last_y,
+                          QVector<QPoint> &cojoint_points);
+
+    GameResult BlashSlashJudge(int last_x, int last_y,
+                               QVector<QPoint> &cojoint_points);
 
     IChessboard *chess_board_;
 };

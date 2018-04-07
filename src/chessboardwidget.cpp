@@ -3,11 +3,23 @@
 
 #define LINE_WIDTH 2
 
+ChessBoardWidget::ChessBoardWidget(QWidget *parent):
+    QWidget(parent),
+    chess_board_(nullptr)
+{
+
+}
+
 ChessBoardWidget::ChessBoardWidget(IChessboard *chess_board, QWidget *parent) :
     QWidget(parent),
     chess_board_(chess_board)
 {
 
+}
+
+void ChessBoardWidget::SetChessBoard(IChessboard *chess_board)
+{
+    chess_board_ = chess_board;
 }
 
 void ChessBoardWidget::SetHighlightPoints(const QVector<QPoint> &highlight_points)
@@ -20,8 +32,12 @@ void ChessBoardWidget::ClearHighlightPoints()
     highlight_points_.clear();
 }
 
-void ChessBoardWidget::paintEvent(QPaintEvent *)
+void ChessBoardWidget::paintEvent(QPaintEvent *e)
 {
+    if(chess_board_ == nullptr){
+        return QWidget::paintEvent(e);
+    }
+
     QRect paint_rect = GetPaintRect();
 
     int h_step = paint_rect.width()/(chess_board_->GetWidth() + 1);

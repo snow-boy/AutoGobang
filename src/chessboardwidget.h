@@ -10,13 +10,18 @@ class ChessBoardWidget : public QWidget
 public:
     explicit ChessBoardWidget(IChessboard *chess_board, QWidget *parent = 0);
 
+    void SetHighlightPoints(const QVector<QPoint> &highlight_points);
+    void ClearHighlightPoints();
+
     // QWidget interface
 protected:
-    virtual void paintEvent(QPaintEvent *event) override;
+    virtual void paintEvent(QPaintEvent *) override;
 
 private:
-    IChessboard *chess_board_;
+    QRect GetPaintRect();
 
+    IChessboard *chess_board_;
+    QVector<QPoint> highlight_points_;
 };
 
 #endif // CHESSBOARDWIDGET_H

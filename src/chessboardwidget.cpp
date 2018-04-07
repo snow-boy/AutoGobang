@@ -94,7 +94,7 @@ void ChessBoardWidget::paintEvent(QPaintEvent *e)
     {
         painter.setBrush(Qt::transparent);
 
-        QPen pen(Qt::red, LINE_WIDTH);
+        QPen pen(Qt::red, LINE_WIDTH*2);
         painter.setPen(pen);
     }
     for(QPoint pos: highlight_points_)

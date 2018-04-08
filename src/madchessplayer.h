@@ -10,9 +10,8 @@ public:
 
     // IChessPlayer interface
 public:
-    virtual void AssignChess(Chess chess) override;
-    virtual void Start() override;
-    virtual void End() override;
+    virtual void Start(Chess assigned_chess) override;
+    virtual void End(Chess winner_chess) override;
 
     virtual void PlaceChess(const IChessboard *chess_board,
                             int *x, int *y,

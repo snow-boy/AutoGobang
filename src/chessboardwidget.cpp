@@ -45,9 +45,26 @@ void ChessBoardWidget::paintEvent(QPaintEvent *e)
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.fillRect(paint_rect, Qt::darkRed);
 
-    {
+    if(highlight_points_.size() > 0){
+        QBrush brush(Qt::darkRed);
+        {
+            QColor color = brush.color();
+            color.setAlpha(100);
+            brush.setColor(color);
+        }
+        painter.fillRect(paint_rect, brush);
+
+        QPen pen(Qt::darkGreen, LINE_WIDTH);
+        {
+            QColor color = pen.color();
+            color.setAlpha(100);
+            pen.setColor(color);
+        }
+        painter.setPen(pen);
+    }
+    else{
+        painter.fillRect(paint_rect, Qt::darkRed);
         QPen pen(Qt::darkGreen, LINE_WIDTH);
         painter.setPen(pen);
     }
@@ -67,7 +84,15 @@ void ChessBoardWidget::paintEvent(QPaintEvent *e)
     }
 
     // draw chess
-    painter.setBrush(Qt::black);
+    if(highlight_points_.size() > 0)
+    {
+        QPen pen(Qt::darkGreen, LINE_WIDTH);
+        QColor color = pen.color();
+        color.setAlpha(100);
+        pen.setColor(color);
+        painter.setPen(pen);
+    }
+
     int chess_radius = std::min(h_step, v_step)/2 - LINE_WIDTH*2 + 2;
     for(int x = 0; x < chess_board_->GetWidth(); ++x)
     {
@@ -75,14 +100,29 @@ void ChessBoardWidget::paintEvent(QPaintEvent *e)
         {
             if(chess_board_->GetChess(x, y) == Chess::Black)
             {
-                painter.setBrush(Qt::black);
+                if((highlight_points_.size() > 0) && (!highlight_points_.contains(QPoint(x, y))))
+                {
+                    QBrush brush(QColor(0, 0, 0, 100));
+                    painter.setBrush(brush);
+                }
+                else{
+                    painter.setBrush(Qt::black);
+                }
+
                 painter.drawEllipse(QPoint(h_step*(x+1) + paint_rect.left(),
                                            v_step*(y+1) + paint_rect.top()),
                                     chess_radius, chess_radius);
             }
             else if(chess_board_->GetChess(x, y) == Chess::White)
             {
-                painter.setBrush(Qt::white);
+                if((highlight_points_.size() > 0) && (!highlight_points_.contains(QPoint(x, y))))
+                {
+                    QBrush brush(QColor(255, 255, 255, 100));
+                    painter.setBrush(brush);
+                }
+                else{
+                    painter.setBrush(Qt::white);
+                }
                 painter.drawEllipse(QPoint(h_step*(x+1) + paint_rect.left(),
                                            v_step*(y+1) + paint_rect.top()),
                                     chess_radius, chess_radius);

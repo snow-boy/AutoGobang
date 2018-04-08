@@ -1,5 +1,6 @@
 #include "chessarena.h"
 #include <QTimerEvent>
+#include <QTime>
 
 static ChessArena *g_inst = nullptr;
 
@@ -40,6 +41,16 @@ void ChessArena::InitChessBoard(int width, int height)
     chess_judge_ = new ChessJudge(chess_board_);
 }
 
+void ChessArena::Reset()
+{
+    for(int i = 0; i < chess_board_->GetWidth(); ++i)
+    {
+        for(int j = 0; j < chess_board_->GetHeight(); ++j){
+            chess_board_->PlaceChess(i, j, Chess::Empty);
+        }
+    }
+}
+
 void ChessArena::Fight(IChessPlayer *player1, Chess chess1,
                        IChessPlayer *player2, Chess chess2)
 {
@@ -48,22 +59,21 @@ void ChessArena::Fight(IChessPlayer *player1, Chess chess1,
     player2_ = player2;
     chess2_ = chess2;
 
-    player1_->AssignChess(chess1_);
-    player1_->Start();
+    player1_->Start(chess1_);
+    player2_->Start(chess2_);
 
-    player2_->AssignChess(chess2_);
-    player2_->Start();
-
-    round_count_ = 0;
-    timer_id_ = startTimer(1000);
+    qsrand(QTime::currentTime().msec());
+    round_count_ = qrand() % 2;
+    emit SigFightBegin(player1, chess1, player2, chess2);
+    timer_id_ = startTimer(100);
 }
 
-void ChessArena::EndFight()
+void ChessArena::EndFight(Chess winner_chess)
 {
     killTimer(timer_id_);
 
-    player1_->End();
-    player2_->End();
+    player1_->End(winner_chess);
+    player2_->End(winner_chess);
 
     player1_ = nullptr;
     player2_ = nullptr;
@@ -86,20 +96,21 @@ void ChessArena::timerEvent(QTimerEvent *event)
                 emit SigPlayerSay(chess2_, QString::fromStdString(something_say));
             }
 
+            QVector<QPoint> highlight_points;
             if(chess_board_->GetChess(x, y) != Chess::Empty){
-                Q_ASSERT(false);
-                emit SigFightEnd(Chess::Empty);
-                EndFight();
+                highlight_points.append(QPoint(x, y));
+                emit SigChessError(chess2_);
+                emit SigChessChanged(highlight_points);
+                EndFight(Chess::Empty);
                 return;
             }
 
             chess_board_->PlaceChess(x, y, chess2_);
-            QVector<QPoint> highlight_points;
             GameResult result = chess_judge_->DoJudge(x, y, highlight_points);
             emit SigChessChanged(highlight_points);
             if(result == GameResult::Win){
                 emit SigFightEnd(chess2_);
-                EndFight();
+                EndFight(chess2_);
                 return;
             }
         }
@@ -111,20 +122,21 @@ void ChessArena::timerEvent(QTimerEvent *event)
                 emit SigPlayerSay(chess1_, QString::fromStdString(something_say));
             }
 
+            QVector<QPoint> highlight_points;
             if(chess_board_->GetChess(x, y) != Chess::Empty){
-                Q_ASSERT(false);
-                emit SigFightEnd(Chess::Empty);
-                EndFight();
+                highlight_points.append(QPoint(x, y));
+                emit SigChessError(chess1_);
+                emit SigChessChanged(highlight_points);
+                EndFight(Chess::Empty);
                 return;
             }
 
             chess_board_->PlaceChess(x, y, chess1_);
-            QVector<QPoint> highlight_points;
             GameResult result = chess_judge_->DoJudge(x, y, highlight_points);
             emit SigChessChanged(highlight_points);
             if(result == GameResult::Win){
                 emit SigFightEnd(chess1_);
-                EndFight();
+                EndFight(chess1_);
                 return;
             }
         }

@@ -8,9 +8,8 @@ class IChessPlayer
 {
 public:
     virtual ~IChessPlayer(){}
-    virtual void AssignChess(Chess chess) = 0;
-    virtual void Start() = 0;
-    virtual void End() = 0;
+    virtual void Start(Chess assigned_chess) = 0;
+    virtual void End(Chess winner_chess) = 0;
 
     virtual void PlaceChess(const IChessboard *chess_board,
                             int *x, int *y,

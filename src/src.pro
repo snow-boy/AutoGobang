@@ -1,4 +1,5 @@
 TEMPLATE = app
+DESTDIR = $$PWD/../bin
 TARGET = Gobang
 QT += widgets
 

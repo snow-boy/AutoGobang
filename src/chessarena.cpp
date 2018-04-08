@@ -72,8 +72,8 @@ void ChessArena::EndFight(Chess winner_chess)
 {
     killTimer(timer_id_);
 
-    player1_->End(winner_chess);
-    player2_->End(winner_chess);
+    player1_->End(winner_chess, chess_board_);
+    player2_->End(winner_chess, chess_board_);
 
     player1_ = nullptr;
     player2_ = nullptr;

@@ -11,7 +11,8 @@ SOURCES += \
     mainwindow.cpp \
     chessarena.cpp \
     playermanager.cpp \
-    madchessplayer.cpp
+    madchessplayer.cpp \
+    playerloader.cpp
 
 HEADERS += \
     ichessboard.h \
@@ -22,7 +23,8 @@ HEADERS += \
     mainwindow.h \
     chessarena.h \
     playermanager.h \
-    madchessplayer.h
+    madchessplayer.h \
+    playerloader.h
 
 FORMS += \
     mainwindow.ui

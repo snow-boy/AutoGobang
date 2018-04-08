@@ -1,14 +1,10 @@
-#ifndef MADCHESSPLAYER_H
-#define MADCHESSPLAYER_H
+#ifndef CHESSPLAYER_H
+#define CHESSPLAYER_H
 
 #include "ichessplayer.h"
 
-class MadChessPlayer: public IChessPlayer
+class ChessPlayer: public IChessPlayer
 {
-public:
-    MadChessPlayer();
-
-    // IChessPlayer interface
 public:
     virtual void Start(Chess assigned_chess) override;
     virtual void End(Chess winner_chess, const IChessboard *chess_board) override;
@@ -18,4 +14,4 @@ public:
                             std::string &word_say) override;
 };
 
-#endif // MADCHESSPLAYER_H
+#endif // CHESSPLAYER_H

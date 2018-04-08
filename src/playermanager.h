@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QMap>
 #include "ichessplayer.h"
+#include "playerloader.h"
 
 class PlayerManager : public QObject
 {

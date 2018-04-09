@@ -1,25 +1,20 @@
-#include "madchessplayer.h"
+#include "chessplayer.h"
 #include <QtGlobal>
 #include <QString>
 
-MadChessPlayer::MadChessPlayer()
+void ChessPlayer::Start(Chess assigned_chess)
 {
 
 }
 
-
-void MadChessPlayer::Start(Chess assigned_chess)
+void ChessPlayer::End(Chess winner_chess, const IChessboard *chess_board)
 {
 
 }
 
-void MadChessPlayer::End(Chess winner_chess, const IChessboard *chess_board)
-{
-
-}
-
-void MadChessPlayer::PlaceChess(const IChessboard *chess_board,
-                                int *x, int *y, std::string &word_say)
+void ChessPlayer::PlaceChess(const IChessboard *chess_board,
+                             int *x, int *y,
+                             std::string &word_say)
 {
     for(int i = 0; i < 100; ++i)
     {

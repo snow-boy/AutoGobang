@@ -1,3 +1,4 @@
+#include "chessplayer.h"
 
 void ChessPlayer::Start(Chess assigned_chess)
 {

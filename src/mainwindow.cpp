@@ -73,6 +73,11 @@ void MainWindow::InitUI()
 
     ui->comboBox_black_player->addItems(PlayerManager::Get()->GetPlayerList());
     ui->comboBox_white_player->addItems(PlayerManager::Get()->GetPlayerList());
+
+    if(PlayerManager::Get()->GetPlayerList().size() == 0){
+        ui->pushButton_fight->setEnabled(false);
+        ui->pushButton_fight->setText("No player found!");
+    }
 }
 
 void MainWindow::on_pushButton_fight_clicked()

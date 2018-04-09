@@ -25,6 +25,7 @@ public slots:
 
 private:
     QMap<QString, IChessPlayer *> player_map_;
+    QList<PlayerLoader *> player_loader_list_;
 };
 
 #endif // PLAYERMANAGER_H

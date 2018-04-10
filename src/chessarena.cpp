@@ -114,6 +114,10 @@ void ChessArena::timerEvent(QTimerEvent *event)
                 return;
             }
         }
+        else{
+            emit SigFightEnd(Chess::Empty);
+            EndFight(Chess::Empty);
+        }
     }
     else{
         player1_->PlaceChess(chess_board_, &x, &y, something_say);
@@ -139,6 +143,10 @@ void ChessArena::timerEvent(QTimerEvent *event)
                 EndFight(chess1_);
                 return;
             }
+        }
+        else{
+            emit SigFightEnd(Chess::Empty);
+            EndFight(Chess::Empty);
         }
     }
 

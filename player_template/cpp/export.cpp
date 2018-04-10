@@ -4,6 +4,9 @@
 
 static ChessPlayer *g_inst = nullptr;
 
+extern "C"
+{
+
 PLAYER_API void _PlayerCreate()
 {
     if(g_inst == nullptr){
@@ -22,4 +25,6 @@ PLAYER_API void _PlayerDestory()
         delete g_inst;
         g_inst = nullptr;
     }
+}
+
 }

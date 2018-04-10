@@ -31,7 +31,7 @@ private:
     GameResult SlashJudge(int last_x, int last_y,
                           QVector<QPoint> &cojoint_points);
 
-    GameResult BlashSlashJudge(int last_x, int last_y,
+    GameResult BlackSlashJudge(int last_x, int last_y,
                                QVector<QPoint> &cojoint_points);
 
     IChessboard *chess_board_;

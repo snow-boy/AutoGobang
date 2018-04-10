@@ -34,7 +34,7 @@ GameResult ChessJudge::DoJudge(int last_x, int last_y, QVector<QPoint> &cojoint_
     }
 
     cojoint_points.clear();
-    result = BlashSlashJudge(last_x, last_y, cojoint_points);
+    result = BlackSlashJudge(last_x, last_y, cojoint_points);
     if(result != GameResult::NoResult){
         return result;
     }
@@ -155,7 +155,7 @@ GameResult ChessJudge::SlashJudge(int last_x, int last_y, QVector<QPoint> &cojoi
     return result;
 }
 
-GameResult ChessJudge::BlashSlashJudge(int last_x, int last_y, QVector<QPoint> &cojoint_points)
+GameResult ChessJudge::BlackSlashJudge(int last_x, int last_y, QVector<QPoint> &cojoint_points)
 {
     Chess chess = chess_board_->GetChess(last_x, last_y);
     assert(chess != Chess::Empty);

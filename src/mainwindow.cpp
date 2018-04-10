@@ -46,7 +46,11 @@ void MainWindow::InitUI()
     connect(ChessArena::Get(), &ChessArena::SigFightEnd, this,
             [&](Chess winner)
     {
-        if(winner == Chess::Black){
+        if(winner == Chess::Empty){
+            ui->textEdit_player1->append(AssembleHighlightString("Draw"));
+            ui->textEdit_player2->append(AssembleHighlightString("Draw"));
+        }
+        else if(winner == Chess::Black){
             ui->textEdit_player1->append(AssembleHighlightString("Winner"));
         }
         else {

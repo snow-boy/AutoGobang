@@ -18,6 +18,8 @@ public:
 
     // place new chess, return old chess
     virtual Chess PlaceChess(int x, int y, Chess chess) = 0;
+
+    virtual int GetStepNo(int x, int y){ return 0; }
 };
 
 #endif // ICHESSBOARD_H

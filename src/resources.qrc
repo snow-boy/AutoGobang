@@ -1,5 +1,6 @@
 <RCC>
-    <qresource prefix="/stylesheet">
+    <qresource prefix="/">
+        <file>resources/chess_board_background.jpg</file>
         <file>resources/QTDark.stylesheet</file>
     </qresource>
 </RCC>

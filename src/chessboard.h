@@ -12,11 +12,15 @@ public:
     virtual int GetHeight() const override;
     virtual Chess GetChess(int x, int y) const override;
     virtual Chess PlaceChess(int x, int y, Chess chess) override;
+    virtual int GetStepNo(int x, int y) override;
+    void Reset();
 
 private:
     int width_;
     int height_;
     QVector<Chess> chess_tank_;
+    QVector<int> steps_no_;
+    int current_step_;
 };
 
 #endif // CHESSBOARD_H

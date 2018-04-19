@@ -46,28 +46,10 @@ void ChessBoardWidget::paintEvent(QPaintEvent *e)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    if(highlight_points_.size() > 0){
-        QBrush brush(Qt::darkRed);
-        {
-            QColor color = brush.color();
-            color.setAlpha(100);
-            brush.setColor(color);
-        }
-        painter.fillRect(paint_rect, brush);
+    painter.drawPixmap(paint_rect, QPixmap(":/resources/chess_board_background.jpg"));
 
-        QPen pen(Qt::darkGreen, LINE_WIDTH);
-        {
-            QColor color = pen.color();
-            color.setAlpha(100);
-            pen.setColor(color);
-        }
-        painter.setPen(pen);
-    }
-    else{
-        painter.fillRect(paint_rect, Qt::darkRed);
-        QPen pen(Qt::darkGreen, LINE_WIDTH);
-        painter.setPen(pen);
-    }
+    QPen grid_pen(Qt::darkGray, LINE_WIDTH);
+    painter.setPen(grid_pen);
 
     // draw vertical lines
     for(int i = 0; i < chess_board_->GetHeight(); ++i)
@@ -83,65 +65,68 @@ void ChessBoardWidget::paintEvent(QPaintEvent *e)
                          h_step*(i+1) + paint_rect.left(), paint_rect.bottom());
     }
 
+
     // draw chess
-    if(highlight_points_.size() > 0)
-    {
-        QPen pen(Qt::darkGreen, LINE_WIDTH);
-        QColor color = pen.color();
-        color.setAlpha(100);
-        pen.setColor(color);
-        painter.setPen(pen);
-    }
+    QPen highlight_border_pen(QColor(255, 0, 0));
+    highlight_border_pen.setWidth(LINE_WIDTH*2);
+
+    QPen general_text_pen(Qt::darkGreen);
+    painter.setBrush(Qt::transparent);
 
     int chess_radius = std::min(h_step, v_step)/2 - LINE_WIDTH*2 + 2;
     for(int x = 0; x < chess_board_->GetWidth(); ++x)
     {
         for(int y = 0; y < chess_board_->GetHeight(); ++y)
         {
+            if(chess_board_->GetChess(x, y) == Chess::Empty){
+                continue;
+            }
+
+            QRect chess_rect(0, 0, chess_radius * 2, chess_radius * 2);
+            chess_rect.moveCenter(QPoint(h_step*(x+1) + paint_rect.left(),
+                                        v_step*(y+1) + paint_rect.top()));
+
+            if(highlight_points_.contains(QPoint(x, y)))
+            {
+                painter.setPen(highlight_border_pen);
+            }
+            else
+            {
+                painter.setPen(Qt::transparent);
+            }
+
             if(chess_board_->GetChess(x, y) == Chess::Black)
             {
-                if((highlight_points_.size() > 0) && (!highlight_points_.contains(QPoint(x, y))))
-                {
-                    QBrush brush(QColor(0, 0, 0, 100));
-                    painter.setBrush(brush);
-                }
-                else{
-                    painter.setBrush(Qt::black);
-                }
+                painter.setBrush(Qt::black);
 
                 painter.drawEllipse(QPoint(h_step*(x+1) + paint_rect.left(),
                                            v_step*(y+1) + paint_rect.top()),
                                     chess_radius, chess_radius);
+                painter.drawPixmap(chess_rect, QPixmap(""));
+
+
             }
             else if(chess_board_->GetChess(x, y) == Chess::White)
             {
-                if((highlight_points_.size() > 0) && (!highlight_points_.contains(QPoint(x, y))))
-                {
-                    QBrush brush(QColor(255, 255, 255, 100));
-                    painter.setBrush(brush);
-                }
-                else{
-                    painter.setBrush(Qt::white);
-                }
+                painter.setBrush(Qt::white);
                 painter.drawEllipse(QPoint(h_step*(x+1) + paint_rect.left(),
                                            v_step*(y+1) + paint_rect.top()),
                                     chess_radius, chess_radius);
+
             }
+
+            if(!highlight_points_.contains(QPoint(x, y)))
+            {
+                painter.setPen(general_text_pen);
+            }
+
+
+            QTextOption option;
+            option.setAlignment(Qt::AlignVCenter|Qt::AlignHCenter);
+            painter.drawText(chess_rect,
+                             QString::number(chess_board_->GetStepNo(x, y)),
+                             option);
         }
-    }
-
-    // highlight cojoint chess
-    {
-        painter.setBrush(Qt::transparent);
-
-        QPen pen(Qt::red, LINE_WIDTH*2);
-        painter.setPen(pen);
-    }
-    for(QPoint pos: highlight_points_)
-    {
-        painter.drawEllipse(QPoint(h_step*(pos.x()+1) + paint_rect.left(),
-                                   v_step*(pos.y()+1) + paint_rect.top()),
-                            chess_radius, chess_radius);
     }
 }
 

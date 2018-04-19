@@ -2,10 +2,14 @@
 
 ChessBoard::ChessBoard(int width, int height):
     width_(width),
-    height_(height)
+    height_(height),
+    current_step_(1)
 {
     chess_tank_.resize(width*height);
     chess_tank_.fill(Chess::Empty);
+
+    steps_no_.resize(width*height);
+    steps_no_.fill(0);
 }
 
 int ChessBoard::GetWidth() const
@@ -33,5 +37,20 @@ Chess ChessBoard::PlaceChess(int x, int y, Chess chess)
 
     Chess old_chess = chess_tank_[y*width_ + x];
     chess_tank_[y*width_ + x] = chess;
+    steps_no_[y*width_ + x] = current_step_;
+    current_step_++;
+
     return old_chess;
+}
+
+int ChessBoard::GetStepNo(int x, int y)
+{
+    return steps_no_[y*width_ + x];
+}
+
+void ChessBoard::Reset()
+{
+    steps_no_.fill(0);
+    chess_tank_.fill(Chess::Empty);
+    current_step_ = 1;
 }

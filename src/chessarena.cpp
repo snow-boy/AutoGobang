@@ -43,12 +43,7 @@ void ChessArena::InitChessBoard(int width, int height)
 
 void ChessArena::Reset()
 {
-    for(int i = 0; i < chess_board_->GetWidth(); ++i)
-    {
-        for(int j = 0; j < chess_board_->GetHeight(); ++j){
-            chess_board_->PlaceChess(i, j, Chess::Empty);
-        }
-    }
+    chess_board_->Reset();
 }
 
 void ChessArena::Fight(IChessPlayer *player1, Chess chess1,

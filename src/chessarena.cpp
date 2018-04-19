@@ -17,6 +17,7 @@ ChessArena::ChessArena(QObject *parent) :
 {
     Q_ASSERT(g_inst == nullptr);
     g_inst = this;
+    qsrand(QTime::currentTime().msec());
 }
 
 ChessArena::~ChessArena()
@@ -57,7 +58,6 @@ void ChessArena::Fight(IChessPlayer *player1, Chess chess1,
     player1_->Start(chess1_);
     player2_->Start(chess2_);
 
-    qsrand(QTime::currentTime().msec());
     round_count_ = qrand() % 2;
     emit SigFightBegin(player1, chess1, player2, chess2);
     timer_id_ = startTimer(100);

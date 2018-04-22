@@ -94,7 +94,7 @@ void ChessPlayer::PlaceChess(const IChessboard *chess_board,
 
     if(my_chess_ == Chess::Black)
     {
-        if(best_black_weight > best_white_weight)
+        if(best_black_weight >= best_white_weight)
         {
             *x = best_black_x;
             *y = best_black_y;
@@ -109,7 +109,7 @@ void ChessPlayer::PlaceChess(const IChessboard *chess_board,
     }
     else if(my_chess_ == Chess::White)
     {
-        if(best_black_weight < best_white_weight)
+        if(best_black_weight <= best_white_weight)
         {
             *x = best_white_x;
             *y = best_white_y;

@@ -64,13 +64,13 @@ void ChessPlayer::PlaceChess(const IChessboard *chess_board,
                 best_black_x = i;
                 best_black_y = j;
             }
-            else if(black_weight == best_black_weight)
-            {
-                if(rand() % 2 == 0){
-                    best_black_x = i;
-                    best_black_y = j;
-                }
-            }
+//            else if(black_weight == best_black_weight)
+//            {
+//                if(rand() % 2 == 0){
+//                    best_black_x = i;
+//                    best_black_y = j;
+//                }
+//            }
 
             if(white_weight > best_white_weight)
             {
@@ -78,13 +78,13 @@ void ChessPlayer::PlaceChess(const IChessboard *chess_board,
                 best_white_x = i;
                 best_white_y = j;
             }
-            else if(white_weight == best_white_weight)
-            {
-                if(rand() % 2 == 0){
-                    best_white_x = i;
-                    best_white_y = j;
-                }
-            }
+//            else if(white_weight == best_white_weight)
+//            {
+//                if(rand() % 2 == 0){
+//                    best_white_x = i;
+//                    best_white_y = j;
+//                }
+//            }
         }
     }
 
@@ -93,7 +93,7 @@ void ChessPlayer::PlaceChess(const IChessboard *chess_board,
 
     if(my_chess_ == Chess::Black)
     {
-        if(best_black_weight >= best_white_weight)
+        if(best_black_weight > best_white_weight)
         {
             *x = best_black_x;
             *y = best_black_y;
@@ -108,7 +108,7 @@ void ChessPlayer::PlaceChess(const IChessboard *chess_board,
     }
     else if(my_chess_ == Chess::White)
     {
-        if(best_black_weight <= best_white_weight)
+        if(best_black_weight < best_white_weight)
         {
             *x = best_white_x;
             *y = best_white_y;
@@ -181,13 +181,144 @@ void ChessPlayer::calculateWeight(const IChessboard *chess_board,
         }
     }
 
-    win_weight = AssignWeight(v_horizontal_line, chess) +
-                 AssignWeight(v_vertical_line, chess) +
-                 AssignWeight(v_backslash_line, chess) +
-                 AssignWeight(v_slash_line, chess);
+    std::vector<int> features;
+
+    int v_continue = 0;
+    int v_l_empty = 0;
+    int v_r_empty = 0;
+    int v_step_to_win = SearchPlaceTimeToWin(v_horizontal_line, chess);
+    SearchContinues(v_horizontal_line, chess, v_l_empty, v_continue, v_r_empty);
+    features.push_back(v_continue);
+    features.push_back(v_l_empty);
+    features.push_back(v_r_empty);
+    features.push_back(v_step_to_win);
+
+    int h_continue = 0;
+    int h_l_empty = 0;
+    int h_r_empty = 0;
+    int h_step_to_win = SearchPlaceTimeToWin(v_vertical_line, chess);
+    SearchContinues(v_vertical_line, chess, h_l_empty, h_continue, h_r_empty);
+    features.push_back(h_continue);
+    features.push_back(h_l_empty);
+    features.push_back(h_r_empty);
+    features.push_back(h_step_to_win);
+
+    int s_continue = 0;
+    int s_l_empty = 0;
+    int s_r_empty = 0;
+    int s_step_to_win = SearchPlaceTimeToWin(v_slash_line, chess);
+    SearchContinues(v_slash_line, chess, s_l_empty, s_continue, s_r_empty);
+    features.push_back(s_continue);
+    features.push_back(s_l_empty);
+    features.push_back(s_r_empty);
+    features.push_back(s_step_to_win);
+
+    int b_continue = 0;
+    int b_l_empty = 0;
+    int b_r_empty = 0;
+    int b_step_to_win = SearchPlaceTimeToWin(v_backslash_line, chess);
+    SearchContinues(v_backslash_line, chess, b_l_empty, b_continue, b_r_empty);
+    features.push_back(b_continue);
+    features.push_back(b_l_empty);
+    features.push_back(b_r_empty);
+    features.push_back(b_step_to_win);
+
+    // 5 continues
+    for(int i = 0; i < features.size(); i += 4)
+    {
+        if(features[i] >= 5)
+        {
+            win_weight = 100;
+            return;
+        }
+    }
+
+    // 4 continues
+    for(int i = 0; i < features.size(); i += 4)
+    {
+        if(features[i] == 4 && features[i + 1] > 0 && features[i + 2] > 0)
+        {
+            win_weight = 90;
+            return;
+        }
+    }
+
+    int count4 = 0;
+    for(int i = 0; i < features.size(); i += 4)
+    {
+        if(features[i] == 4 && features[3] <= 1)
+        {
+            count4 ++;
+        }
+        if(count4 >= 2)
+        {
+            win_weight = 90;
+            return;
+        }
+    }
+
+    // 3 continue
+    int count32 = 0;
+    for(int i = 0; i < features.size(); i += 4)
+    {
+        if(features[i] == 3 && features[i + 1] > 1 && features[i + 2] > 1)
+        {
+            count32++;
+        }
+
+        if((count32 > 0 && count4 > 0) || count32 > 1)
+        {
+            win_weight = 80;
+            return;
+        }
+    }
+
+    int count31 = 0;
+    for(int i = 0; i < features.size(); i += 4)
+    {
+        if(features[i] == 3 && ((features[i + 1] > 1 && features[i + 2] > 2)||
+                                (features[i + 1] > 2 && features[i + 2] > 1)))
+        {
+            count31 ++;
+        }
+
+        if(count31 > 1)
+        {
+            win_weight = 80;
+            return;
+        }
+    }
+
+    win_weight = count32 * 8 + count31*7;
+
+    if(s_continue == 2 && s_l_empty > 2 && s_r_empty > 2 &&
+            b_continue == 2 && b_l_empty > 2 && b_r_empty > 2)
+    {
+        win_weight += 10;
+        return;
+    }
+
+    for(int i = 0; i < features.size(); i+=4)
+    {
+        if(features[i] == 2 && ((features[i + 1] > 2 && features[i + 2] > 1)||
+                             (features[i + 1] > 1 && features[i + 2] > 2)))
+        {
+            win_weight += 5;
+        }
+    }
+
+    for(int i = 0; i < features.size(); i+=4)
+    {
+        if(features[i] == 1 && ((features[i + 1] > 3 && features[i + 2] > 2)||
+                             (features[i + 1] > 2 && features[i + 2] > 3)))
+        {
+            win_weight += 2;
+        }
+    }
 }
 
-int64_t ChessPlayer::AssignWeight(std::vector<int> &chess_vector, Chess dst_chess)
+void ChessPlayer::SearchContinues(std::vector<int> &chess_vector, Chess dst_chess,
+                                  int &left_empty, int &continue_count, int &right_empty)
 {
     assert(chess_vector.size() == 9);
 
@@ -225,7 +356,7 @@ int64_t ChessPlayer::AssignWeight(std::vector<int> &chess_vector, Chess dst_ches
     int right_empty_count = 0;
     for(int i = right_continue_count + 1; i < 5; ++i)
     {
-        if(chess_vector[4 - i] == static_cast<int>(Chess::Empty)){
+        if(chess_vector[4 + i] == static_cast<int>(Chess::Empty)){
             right_empty_count ++;
         }
         else{
@@ -233,55 +364,42 @@ int64_t ChessPlayer::AssignWeight(std::vector<int> &chess_vector, Chess dst_ches
         }
     }
 
-    if(left_continue_count + left_empty_count +
-            right_continue_count + right_empty_count + 1 < 5)
+    left_empty = left_empty_count;
+    right_empty = right_empty_count;
+    continue_count = left_continue_count + right_continue_count + 1;
+}
+
+int ChessPlayer::SearchPlaceTimeToWin(std::vector<int> &chess_vector, Chess dst_chess)
+{
+    int min_time = 5;
+    for(int i = 0; i < 5; ++i)
     {
-        return 0;
+        int current_min = 5;
+        for(int j = 0; j < 5; ++j)
+        {
+            if(i + j == 4)
+            {
+                current_min--;
+                continue;
+            }
+            if((chess_vector[i + j] != static_cast<int>(dst_chess)) &&
+                    (chess_vector[i + j] != static_cast<int>(Chess::Empty)))
+            {
+                current_min = 5;
+                break;
+            }
+
+            if(chess_vector[i + j] == static_cast<int>(dst_chess))
+            {
+                current_min --;
+            }
+        }
+
+        if(current_min < min_time)
+        {
+            min_time = current_min;
+        }
     }
 
-    int continue_count = left_continue_count + right_continue_count + 1;
-    if(continue_count >= 5){
-        return 10000000;
-    }
-
-    if(continue_count == 4){
-        int64_t weight = 100000;
-        if(left_empty_count > 0){
-            weight += 100000;
-        }
-
-        if(right_empty_count > 0){
-            weight += 100000;
-        }
-
-        return weight;
-    }
-
-    if(continue_count == 3){
-        int64_t weight = 1000;
-        if(left_empty_count > 0){
-            weight += 1000;
-        }
-
-        if(right_empty_count > 0){
-            weight += 1000;
-        }
-
-        return weight;
-    }
-
-    if(continue_count == 2){
-        int64_t weight = 10;
-        if(left_empty_count > 0){
-            weight += 10;
-        }
-
-        if(right_empty_count > 0){
-            weight += 10;
-        }
-
-        return weight;
-    }
-
-    return 0;
+    return min_time;
 }

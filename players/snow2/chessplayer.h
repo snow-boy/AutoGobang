@@ -21,7 +21,12 @@ private:
                          int64_t &win_weight,
                          Chess chess);
 
-    int64_t AssignWeight(std::vector<int> &chess_vector, Chess dst_chess);
+    void SearchContinues(std::vector<int> &chess_vector, Chess dst_chess,
+                         int &left_empty, int &continue_count,
+                         int &right_empty);
+
+    int SearchPlaceTimeToWin(std::vector<int> &chess_vector, Chess dst_chess);
+
 
     Chess my_chess_;
 };

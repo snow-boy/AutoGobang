@@ -24,7 +24,7 @@ int main(int argc, char **argv)
     }
 
     ChessArena chess_arena;
-    chess_arena.InitChessBoard(16, 16);
+    chess_arena.InitChessBoard(15, 15);
 
     MainWindow main_window;
     main_window.show();

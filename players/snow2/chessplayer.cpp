@@ -8,6 +8,7 @@
 
 void ChessPlayer::Start(Chess assigned_chess)
 {
+    qDebug() << "mychess: " << static_cast<int>(assigned_chess);
     my_chess_ = assigned_chess;
     srand((int)time(0));
 }
@@ -246,7 +247,7 @@ void ChessPlayer::calculateWeight(const IChessboard *chess_board,
     int count4 = 0;
     for(int i = 0; i < features.size(); i += 4)
     {
-        if(features[i] == 4 && features[3] <= 1)
+        if(features[i] == 4 && features[i+3] <= 1)
         {
             count4 ++;
         }
@@ -285,6 +286,34 @@ void ChessPlayer::calculateWeight(const IChessboard *chess_board,
         if(count31 > 1)
         {
             win_weight = 80;
+            return;
+        }
+    }
+
+    int count305 = 0;
+    for(int i = 0; i < features.size(); i += 4)
+    {
+        if(features[i + 3] <= 2 && features[i + 1] > 0 && features[i + 2] > 0)
+        {
+            count305++;
+        }
+
+        if(count305 >= 2){
+            win_weight = 75;
+            return;
+        }
+    }
+
+    int count30 = 0;
+    for(int i = 0; i < features.size(); i += 4)
+    {
+        if(features[i] == 3 && features[i + 3] <= 2)
+        {
+            count30++;
+        }
+
+        if(count30 >= 2){
+            win_weight = 70;
             return;
         }
     }

@@ -11,6 +11,7 @@ void ChessPlayer::Start(Chess assigned_chess)
     qDebug() << "mychess: " << static_cast<int>(assigned_chess);
     my_chess_ = assigned_chess;
     srand((int)time(0));
+    first_checked_ = false;
 }
 
 void ChessPlayer::End(Chess winner_chess, const IChessboard *chess_board)
@@ -32,10 +33,37 @@ static void PlaceToAnEmptyPosition(const IChessboard *chess_board,
     }
 }
 
+static bool IsFirstPlace(const IChessboard *chess_board)
+{
+    for(int i = 0; i < chess_board->GetWidth(); ++i)
+    {
+        for(int j = 0; j < chess_board->GetHeight(); ++j)
+        {
+            if(chess_board->GetChess(i, j) != Chess::Empty)
+            {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
 void ChessPlayer::PlaceChess(const IChessboard *chess_board,
                              int *x, int *y,
                              std::string &word_say)
 {
+    if(!first_checked_)
+    {
+        first_checked_ = true;
+        if(IsFirstPlace(chess_board)){
+            *x = chess_board->GetWidth()/2;
+            *y = chess_board->GetHeight()/2;
+            return;
+        }
+    }
+
+
     int64_t best_black_weight = 0;
     int best_black_x = 0;
     int best_black_y = 0;

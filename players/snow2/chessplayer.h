@@ -29,6 +29,7 @@ private:
 
 
     Chess my_chess_;
+    bool first_checked_;
 };
 
 #endif // CHESSPLAYER_H
